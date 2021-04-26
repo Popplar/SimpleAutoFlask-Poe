@@ -1,7 +1,7 @@
 ;----------------------------------------------------------------------
 ; PoE Flasks macro for AutoHotKey
 ;----------------------------------------------------------------------
-#IfWinActive, Path of Exile ahk_class POEWindowClass
+#IfWinActive, Path of Exile
 #SingleInstance force
 #NoEnv  
 #Warn  
@@ -19,7 +19,7 @@ If (Not A_IsAdmin) {
 ;----------------------------------------------------------------------
 FlaskInit := []
 ;----------------------------------------------------------------------
-; Initialize Script (F3 to start).
+; Initialize Script (F2 to start).
 ;----------------------------------------------------------------------
 Enabled := false
 
@@ -27,8 +27,12 @@ RemoveToolTip:
 	ToolTip
 	return
 
-F3::
+F2::
 	Enabled := not Enabled
+	Hotkey, IfWinActive, Path of Exile
+	Hotkey, ~q,% Enabled?"On":"Off"
+	Hotkey, ~w,% Enabled?"On":"Off"
+	
 	if Enabled {
 		; initialize start of auto-flask use
 		ToolTip, UseFlasks On
@@ -49,23 +53,14 @@ F3::
 ; (channeling or continuous attacking).
 ;----------------------------------------------------------------------
 ~q::
-	if (Enabled) {
-		Gosub, CycleAllFlasksWhenReady
-	}
-	KeyWait, q, D
-	return
-
 ~w::
-	if (Enabled) {
-		Gosub, CycleAllFlasksWhenReady
-	}
-	KeyWait, w, D
+	Gosub, CycleAllFlasksWhenReady
 	return
 
 CycleAllFlasksWhenReady:
 	for index, item in FlaskInit {
 		PixelGetColor, tempColor, item.x, item.y
-		if (tempColor = item.color Or item.x Not 0) {
+		if ((tempColor = item.color) And Not (item.x = 0)) {
 			SendInput %index%
 		}
 	}
