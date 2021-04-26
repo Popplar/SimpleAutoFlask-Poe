@@ -12,6 +12,13 @@
 #Persistent
 SendMode Input
 
+If (Not A_IsAdmin) {
+    try {
+        Run *RunAs "%A_AhkPath%" "%A_ScriptFullPath%"
+        ExitApp
+    }
+}
+;----------------------------------------------------------------------
 Enabled := false
 
 RemoveToolTip:
