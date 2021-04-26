@@ -7,6 +7,13 @@
 #Warn  
 #Persistent
 SendMode Input
+
+If (Not A_IsAdmin) {
+    try {
+        Run *RunAs "%A_AhkPath%" "%A_ScriptFullPath%"
+        ExitApp
+    }
+}
 ;----------------------------------------------------------------------
 ; Setting Flasks X,Y coordinates (Used to check if color on that pixel changed to ensure usage of Flask).
 ;----------------------------------------------------------------------
