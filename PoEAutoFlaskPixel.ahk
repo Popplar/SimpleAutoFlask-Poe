@@ -4,7 +4,8 @@
 #IfWinActive, Path of Exile
 #SingleInstance force
 #NoEnv  
-#Warn  
+#Warn
+#MaxHotkeysPerInterval 200
 #Persistent
 SendMode Input
 
@@ -18,6 +19,7 @@ If (Not A_IsAdmin) {
 ; Setting Flasks X,Y coordinates (Used to check if color on that pixel changed to ensure usage of Flask).
 ;----------------------------------------------------------------------
 FlaskInit := []
+Blockade := 0
 ;----------------------------------------------------------------------
 ; Initialize Script (F2 to start).
 ;----------------------------------------------------------------------
@@ -54,15 +56,20 @@ F2::
 ;----------------------------------------------------------------------
 ~q::
 ~w::
-	Gosub, CycleAllFlasksWhenReady
+	If (A_TickCount > Blockade)
+		Gosub, CycleAllFlasksWhenReady
+	Else
+		Sleep, 100
 	return
 
 CycleAllFlasksWhenReady:
+Critical
 	for index, item in FlaskInit {
 		PixelGetColor, tempColor, item.x, item.y
-		if ((tempColor = item.color) And Not (item.x = 0)) {
+		if ((tempColor = item.color) And Not (item.x = 0)) {		
 			SendInput %index%
-		}
+			Blockade := A_TickCount + 200 ; Now + 0.2 sec
+		} ; avoid the SendInput to be sent twice on a very short time
 	}
 	return
 ;----------------------------------------------------------------------
